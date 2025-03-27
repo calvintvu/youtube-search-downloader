@@ -9,6 +9,7 @@ from googleapiclient.discovery import build
 load_dotenv()
 API_KEY = os.getenv("API_KEY")
 MAX_FILE_SIZE = os.getenv("MAX_FILE_SIZE")
+COOKIEFILE = os.getenv("COOKIE_FILE")
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
@@ -84,7 +85,8 @@ def download_videos(video_ids, output_dir):
         "format": f"bestvideo[filesize<{MAX_FILE_SIZE}]+bestaudio/best",
         'merge_output_format': 'mp4',
         'outtmpl': os.path.join(output_dir, '%(title)s.%(ext)s'),
-    }
+        'cookiefile': COOKIEFILE,  
+    }   
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(video_urls)

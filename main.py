@@ -1,12 +1,12 @@
 import youtube_search
 import youtube_playlist
-
+import browser_cookie3
 import os
-import yt_dlp
-import concurrent.futures
 import argparse
-from dotenv import load_dotenv
-from googleapiclient.discovery import build
+from http.cookiejar import MozillaCookieJar
+
+COOKIEFILE = os.getenv("COOKIE_FILE")
+cookies_path = COOKIEFILE
 
 class TypeHelpFormatter(argparse.HelpFormatter):
     def _format_action_invocation(self, action):
@@ -18,6 +18,22 @@ class TypeHelpFormatter(argparse.HelpFormatter):
             return f"{metavar} ({type_name})"
         # For optional arguments, fallback to the default formatting.
         return super()._format_action_invocation(action)
+
+def extract_cookies():
+    if os.path.exists(cookies_path):
+        print(f"{cookies_path} exists!")
+        return
+    else:
+        print(f"{cookies_path} does not exist, generating file.")
+        try:
+            cj = browser_cookie3.brave()
+            m_cj = MozillaCookieJar(cookies_path)
+            for cookie in cj:
+                m_cj.set_cookie(cookie)
+            m_cj.save(ignore_discard=True, ignore_expires=True)
+            print(f"Cookies saved to {cookies_path}")
+        except Exception as e:
+            print(f"Error generating cookies: {e}")
 
 def validate_downloads(output_dir):
     pass
@@ -47,6 +63,7 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    extract_cookies()
     if (args.p):
         youtube_playlist.download_youtube_videos_from_playlist(str(args.title), str(args.output_dir), int(args.max_results), int(args.max_workers))
     else:

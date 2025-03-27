@@ -58,7 +58,7 @@ def extract_cookies(browser="brave"):
         print(f"{cookies_path} exists!")
         return
     else:
-        print(f"{cookies_path} does not exist, generating file.")
+        print(f"{cookies_path} does not exist, generating cookies.")
         try:
             if browser.lower() == "chrome":
                 cj = browser_cookie3.chrome()

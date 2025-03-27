@@ -1,7 +1,7 @@
 import os
 import yt_dlp
 import concurrent.futures
-import argparse
+from langdetect import detect, DetectorFactory
 from dotenv import load_dotenv
 from googleapiclient.discovery import build
 
@@ -13,6 +13,7 @@ COOKIEFILE = os.getenv("COOKIE_FILE")
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
 
+DetectorFactory.seed = 0
 exclude_keywords = [
     "album",
     "score",
@@ -23,7 +24,16 @@ exclude_keywords = [
     "music",
     "songs",
     "song",
+    "mix",
+    "live"
 ]
+
+def is_english(text, target_lang="en"):
+    try:
+        lang = detect(text)
+        return lang == target_lang
+    except Exception:
+        return False
 
 def search_playlists(keyword, max_results=5):
     youtube = build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION, developerKey=API_KEY)
@@ -102,10 +112,13 @@ def download_youtube_videos_from_playlist(keyword, output_dir, maxResults=10, ma
         print("No playlists found for the given keyword.")
         return
 
-    filtered_playlists = [
-        (pid, title) for pid, title in playlists
-        if not any(ex_kw.lower() in title.lower() for ex_kw in exclude_keywords)
-    ]
+    filtered_playlists = []
+    for pid, title in playlists:
+        if any(ex_kw.lower() in title.lower() for ex_kw in exclude_keywords):
+            continue
+        if not is_english(title):
+            continue
+        filtered_playlists.append((pid, title))
 
     if not filtered_playlists:
         print("No playlists remain after filtering with the excluded keywords.")

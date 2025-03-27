@@ -85,8 +85,9 @@ def download_videos(video_ids, output_dir):
         "format": f"bestvideo[filesize<{MAX_FILE_SIZE}]+bestaudio/best",
         'merge_output_format': 'mp4',
         'outtmpl': os.path.join(output_dir, '%(title)s.%(ext)s'),
-        'cookiefile': COOKIEFILE,  
     }   
+    if os.path.exists(COOKIEFILE):
+        ydl_opts['cookiefile'] = COOKIEFILE
     
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         ydl.download(video_urls)

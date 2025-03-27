@@ -20,7 +20,9 @@ exclude_keywords = [
     "ost",
     "radio",
     "lore",
-    "music"
+    "music",
+    "songs",
+    "song",
 ]
 
 def search_playlists(keyword, max_results=5):

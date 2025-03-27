@@ -95,7 +95,7 @@ if __name__ == "__main__":
         "output_dir", type=str, help="Directory to store downloaded videos in."
     )
     parser.add_argument(
-        "-browser", type=str, help="Browser cookies to use."
+        "-browser", type=str, choices=["chrome", "firefox", "edge", "brave", "safari"], help="Browser cookies to use."
     )
     parser.add_argument(
         "max_results", type=int, help="Maximum number of videos to download."
